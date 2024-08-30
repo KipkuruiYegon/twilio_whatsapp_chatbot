@@ -508,10 +508,42 @@ def confirm_order(order_id):
             order = order_details[0]
             status = order.get('Status', 'Unknown')
             total_amount = order.get('Amount_Including_VAT', 'N/A')
+
+            # Fetch shipping details
+            ship_to_name = order.get('ShiptoName', 'N/A')
+            ship_to_address = order.get('ShiptoAddress', 'N/A')
+            ship_to_address2 = order.get('Ship_to_Address2', '')
+            ship_to_city = order.get('Ship_to_City', '')
+            ship_to_county = order.get('Ship_to_County', '')
+            ship_to_post_code = order.get('Ship_to_Post_Code', '')
+
+            # Fetch billing (sell to) details
+            sell_to_address = order.get('Sell_to_Address', 'N/A')
+            sell_to_address2 = order.get('Sell_to_Address_2', '')
+            sell_to_city = order.get('Sell_to_City', '')
+            sell_to_county = order.get('Sell_to_County', '')
+            sell_to_post_code = order.get('Sell_to_Post_Code', '')
+
+            shipping_details = (
+                f"{ship_to_name}\n"
+                f"{ship_to_address}\n"
+                f"{ship_to_address2}\n"
+                f"{ship_to_city}, {ship_to_county} {ship_to_post_code}"
+            )
+
+            billing_details = (
+                f"{sell_to_address}\n"
+                f"{sell_to_address2}\n"
+                f"{sell_to_city}, {sell_to_county} {sell_to_post_code}"
+            )
+
+            # Construct response message
             response_message = (
                 f"Your order {order_id} is confirmed.\n"
                 f"Status: {status}\n"
-                f"Total paid Amount: {total_amount:,} KES"
+                f"Total paid Amount: {total_amount:,} KES\n\n"
+                f"Shipping Details:\n{shipping_details}\n\n"
+                f"Shipping Address:\n{billing_details}"
             )
         else:
             response_message = f"No order found with ID {order_id}."
@@ -519,3 +551,5 @@ def confirm_order(order_id):
         response_message = f"Failed to retrieve order status for {order_id}. Please try again later."
 
     return response_message
+
+
